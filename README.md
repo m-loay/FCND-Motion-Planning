@@ -125,3 +125,61 @@ Put all of these together and make up your own crazy paths to fly! Can you fly a
 Ok flying a double helix might seem like a silly idea, but imagine you are an autonomous first responder vehicle. 
 You need to first fly to a particular building or location, then fly a reconnaissance pattern to survey the 
 scene! Give it a try!
+
+### Explain the Starter Code
+
+#### 1. Explain the functionality of what's provided in `motion_planning.py` and `planning_utils.py`
+These scripts contain a basic planning implementation that includes starter code implementation 
+of modified `backyard_flyer_solution.py` which is `motion_planning.py` with the following modification:
+1. ***plan_path*** function to calculate the waypoints instead box way points with new state of **PLANNING**.
+2. It uses a 2.5 HD map with position feed-back which recorded in `colliders.csv`.
+3. All flight mission paramters are set in plan_path ***plan_path*** function.
+4. In `planning_utils.py` it contints the simple implementations of A* star Algorithm and Simple Action Class.
+5. The Path planned is converted to waypoints.
+
+### Implementing Your Path Planning Algorithm
+
+#### 1. Set your global home position
+I got global home position from the first line in `colliders.csv` file describes the global home position as lat0 37.792480, lon0 -122.397450. I used ***read_data*** [line 28](planning_utils.py#L28) in `planning_utils.py` in  to extract data.
+Then I set home position [line 137](motion_planning.py#L137) in `motion_planning.py`.
+
+
+#### 2. Set your current local position
+I retreived the drone's current position in geodetic coordinates from `self.global_position`, and using global home position I used the utility function `global_to_local()` to convert the current global position to local position.
+
+In line [line 153](motion_planning.py#L153) in `motion_planning.py` function ***calculate_start_goal_local_position*** which Implemented in [line 49](planning_utils.py#L49) in `planning_utils.py` 
+
+#### 3. Set grid start position from local position
+To get the exact grid start i subtracted map offset from current local position.
+
+In line [line 153](motion_planning.py#L153) in `motion_planning.py` function ***calculate_start_goal_local_position*** which Implemented in [line 50](planning_utils.py#L50) in `planning_utils.py`
+
+#### 4. Set grid goal position from geodetic coords
+The global position is passed as an external argument to `motion_planning.py` to class **MotionPlanning**.
+And it processed exactly like start position in line [line 153](motion_planning.py#L153) in `motion_planning.py` function ***calculate_start_goal_local_position*** which Implemented in [line 53](planning_utils.py#L53) in `planning_utils.py`
+
+#### 5. Modify A* to include diagonal motion (or replace A* altogether)
+1. I used the modifed Action with diagnoal motions implemented in `Motion_planing/Planning_as_search/simpleAction.py`.
+
+2. I used both gird(Implemented in `Motion_planing/Flying_Car_Representation/ConfgurationSpace.py`) and graph using Voronoi (Implemented in `Motion_planing/From_Grid_to_Graph/grid_to_graph.py`).
+
+when flag *GRID* is true the grid based planning is activated [line 140](motion_planning.py#L140).
+when flag *VORONOI* is true the graph based planning is activated [line 143](motion_planning.py#L143).
+
+3. I used both A* star Algorithm based on on which planning criteria is activated from the previos step
+in [line 164](motion_planning.py#L164),**find_path_grid** is implemented in [line 59](planning_utils.py#L59) for *GRID* and [line 167](motion_planning.py#L167),**find_path_graph_voronoi** is implemented in [line 69](planning_utils.py#L69) for *VORONOI*.
+
+
+#### 6. Cull waypoints 
+The path always pruned using collinearity in both planning criteria in **find_path_grid** is implemented in [line 66](planning_utils.py#L66) for Grid.
+And for Voronoi in **find_path_graph_voronoi** is implemented in [line 80](planning_utils.py#L80).
+
+### Execute the flight
+#### 1. Does it work?
+It works!
+
+### Double check that you've met specifications for each of the [rubric](https://review.udacity.com/#!/rubrics/1534/view) points.
+  
+# Extra Challenges: Real World Planning
+
+For an extra challenge, consider implementing some of the techniques described in the "Real World Planning" lesson. You could try implementing a vehicle model to take dynamic constraints into account, or implement a replanning method to invoke if you get off course or encounter unexpected obstacles.
