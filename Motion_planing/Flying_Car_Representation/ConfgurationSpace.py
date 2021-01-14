@@ -51,11 +51,10 @@ def create_grid(data, drone_altitude =5, safety_distance=3):
     # calculate the size of the grid.
     north_size = int(np.ceil(north_max - north_min))
     east_size = int(np.ceil(east_max - east_min))
+
     # Initialize an empty grid
     grid = np.zeros((north_size, east_size))
-    # Center offset for grid
-    north_min_center = np.min(data[:, 0])
-    east_min_center = np.min(data[:, 1])
+
     # Populate the grid with obstacles
     for i in range(data.shape[0]):
         north, east, alt, d_north, d_east, d_alt = data[i, :]
@@ -68,7 +67,7 @@ def create_grid(data, drone_altitude =5, safety_distance=3):
             ]
             grid[obstacle[0]:obstacle[1]+1, obstacle[2]:obstacle[3]+1] = 1
 
-    return grid
+    return grid, int(north_min), int(east_min)
 
 def main():
     plt.rcParams["figure.figsize"] = [12, 12]
@@ -81,7 +80,7 @@ def main():
     safe_distance = 3
 
     data = readData()
-    grid = create_grid(data,drone_altitude, safe_distance)
+    grid,_,_ = create_grid(data,drone_altitude, safe_distance)
     # equivalent to
     # plt.imshow(np.flip(grid, 0))
     # NOTE: we're placing the origin in the lower lefthand corner here

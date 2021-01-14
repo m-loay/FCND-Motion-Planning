@@ -6,16 +6,21 @@ d = dirname(dirname(abspath(__file__)))
 Flying_Car_Representation = d + '\\Flying_Car_Representation'
 sys.path.insert(1, Flying_Car_Representation)
 
+Planning_as_search = d + '\\Planning_as_search'
+sys.path.insert(1, Planning_as_search)
+from heuristicFunctions import NormalDistance
+
+
 import numpy as np
 import numpy.linalg as LA
 import matplotlib.pyplot as plt
 from bresenham import bresenham
 from ConfgurationSpace import readData
-
+import networkx as nx
 # Here you'll modify the `create_grid()` method from a previous exercise
 # In this new function you'll record obstacle centres and
 # create a Voronoi graph around those points
-def create_grid_and_edges(data, drone_altitude=5, safety_distance=3):
+def create_grid_and_edges_voronoi(data, drone_altitude=5, safety_distance=3):
     """
     Returns a grid representation of a 2D configuration space
     along with Voronoi graph edges given obstacle data and the
@@ -82,4 +87,31 @@ def create_grid_and_edges(data, drone_altitude=5, safety_distance=3):
             p2 = (p2[0], p2[1])
             edges.append((p1, p2))
 
-    return grid, edges
+    return grid, edges, int(north_min), int(east_min)
+
+def create_graph_from_edges(edges):
+    """
+    Create a graph from the `edges`
+    """
+    G = nx.Graph()
+    for e in edges:
+        p1 = e[0]
+        p2 = e[1]
+        dist = LA.norm(np.array(p2) - np.array(p1))
+        G.add_edge(p1, p2, weight=dist)
+    return G
+
+def closest_point(graph, point):
+    """
+    Compute the closest point in the `graph`
+    to the `point_3d`.
+    """
+    current_point = (point[0], point[1])
+    closest_point = None
+    dist = 100000
+    for p in graph.nodes:
+        d = LA.norm(np.array(p) - np.array(current_point))
+        if d < dist:
+            closest_point = p
+            dist = d
+    return closest_point

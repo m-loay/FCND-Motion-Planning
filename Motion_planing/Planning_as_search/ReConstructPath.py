@@ -17,7 +17,7 @@ def retrivePathWithCost(start, goal, branch):
     # Retrace your steps
     path = []
     n = goal
-    # path.append(goal)
+    path.append(goal)
     path_cost = branch[n][0]
     while branch[n][1] != start:
         # Append each new node to the path as you work your way back

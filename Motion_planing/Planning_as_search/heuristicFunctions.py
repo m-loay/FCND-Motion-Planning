@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.linalg as LA
+from math import sqrt
 # TODO: implement a heuristic function. This may be one of the
 # functions described above or feel free something to think of something
 # else.

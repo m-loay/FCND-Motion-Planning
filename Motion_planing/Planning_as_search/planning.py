@@ -113,10 +113,52 @@ def breadth_first_cost(grid, start, goal):
         path,path_cost = retrivePathWithCost(start, goal, branch)
     return path,path_cost
 
+def a_star(grid, start, goal, h,Ac = ActionCost, valid_action = valid_actions):
+    queue = PriorityQueue()
+    queue.put((0, start))
+    visited = set(start)
+
+    branch = {}
+    path = []
+    path_cost = 0
+    found = False
+    
+    while not queue.empty():
+        item = queue.get()
+        current_cost = item[0]
+        current_node = item[1]
+
+        if current_node == goal:
+            print('Found a path.')
+            found = True
+            break
+        else:
+            for a in valid_action(grid, current_node, Ac):
+                # get the tuple representation
+                da = a.delta
+                next_node = (current_node[0] + da[0], current_node[1] + da[1])
+                # TODO: calculate branch cost (action.cost + g)
+                branch_cost = current_cost + a.cost
+                # TODO: calculate queue cost (action.cost + g + h)
+                queue_cost = branch_cost + h(next_node,goal)
+                
+                if next_node not in visited:                
+                    visited.add(next_node)               
+                    branch[next_node] = (branch_cost, current_node, a)
+                    queue.put((queue_cost, next_node))
+    if(found):
+        path,path_cost = retrivePathWithCost(start, goal, branch)
+    else:
+        print("path Not Found")
+
+    return path,path_cost
+
 def a_star_graph(graph, start, goal, h,Ac = ActionCost, valid_action = valid_actions):
     queue = PriorityQueue()
     queue.put((0, start))
     visited = set(start)
+    path =[]
+    path_cost =0
 
     branch = {}
     found = False
@@ -144,54 +186,11 @@ def a_star_graph(graph, start, goal, h,Ac = ActionCost, valid_action = valid_act
                     branch[next_node] = (branch_cost, current_node)
                     queue.put((queue_cost, next_node))
     if(found):
-        print("Path Found")
+        path,path_cost = retrivePathWithCost(start, goal, branch)
     else:
         print("path Not Found")
-        branch =0
 
-    return branch
-
-def a_star(grid, start, goal, h,Ac = ActionCost, valid_action = valid_actions):
-    queue = PriorityQueue()
-    queue.put((0, start))
-    visited = set(start)
-
-    branch = {}
-    found = False
-    
-    while not queue.empty():
-        item = queue.get()
-        current_node = item[1]
-        if current_node == start:
-            current_cost = 0.0
-        else:              
-            current_cost = branch[current_node][0]
-            
-        if current_node == goal:        
-            print('Found a path.')
-            found = True
-            break
-        else:
-            for a in valid_action(grid, current_node, Ac):
-                # get the tuple representation
-                da = a.delta
-                next_node = (current_node[0] + da[0], current_node[1] + da[1])
-                # TODO: calculate branch cost (action.cost + g)
-                branch_cost = current_cost + a.cost
-                # TODO: calculate queue cost (action.cost + g + h)
-                queue_cost = branch_cost + h(next_node,goal)
-                
-                if next_node not in visited:                
-                    visited.add(next_node)               
-                    branch[next_node] = (branch_cost, current_node, a)
-                    queue.put((queue_cost, next_node))
-    if(found):
-        print("Path Found")
-    else:
-        print("path Not Found")
-        branch =0
-
-    return branch
+    return path,path_cost
 
 def a_star_graph_complete(graph, start, goal, h,Ac = ActionCost, valid_action = valid_actions):
     """Modified A* to work with NetworkX graphs."""
@@ -224,9 +223,8 @@ def a_star_graph_complete(graph, start, goal, h,Ac = ActionCost, valid_action = 
                     
                     branch[next_node] = (new_cost, current_node)
     if(found):
-        print("Path Found")
+        path,path_cost = retrivePathWithCost(start, goal, branch)
     else:
         print("path Not Found")
-        branch =0
 
-    return branch
+    return path,path_cost

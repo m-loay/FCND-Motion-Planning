@@ -25,13 +25,14 @@ import numpy.linalg as LA
 import networkx as nx
 import matplotlib.pyplot as plt
 from ConfgurationSpace import readData
-from grid_to_graph import create_grid_and_edges
+from grid_to_graph import create_grid_and_edges_voronoi
+from grid_to_graph import create_graph_from_edges
 from grid_to_graph import closest_point
 from Collinearity import Collinear
 from heuristicFunctions import NormalDistance
 from heuristicFunctions import EculdianDistance
 from planning import a_star
-from planning import a_star_graph
+from planning import a_star_graph_complete
 from ReConstructPath import retrivePathWithCost
 from simpleAction import ActionCity
 from simpleAction import valid_actions_city
@@ -53,7 +54,7 @@ safe_distance = 3
 # TODO: Use `create_grid` to create a grid configuration space of
 # the obstacle data.
 data = readData()
-grid, edges = create_grid_and_edges(data,drone_altitude, safe_distance)
+grid, edges, _, _ = create_grid_and_edges_voronoi(data,drone_altitude, safe_distance)
 
 
 ########################################################################################################################
@@ -75,12 +76,7 @@ plt.show()
 ########################################################################################################################
 # TODO: create the graph with the weight of the edges
 # set to the Euclidean distance between the points
-G = nx.Graph()
-for e in edges:
-    p1 = e[0]
-    p2 = e[1]
-    dist = LA.norm(np.array(p2) - np.array(p1))
-    G.add_edge(p1, p2, weight=dist)
+G = create_graph_from_edges(edges)
 
 ##use graph to get closet start and goal point
 start_ne_g = closest_point(G, start_ne)
@@ -111,13 +107,11 @@ plt.show()
 ########################################################################################################################
 
 #Using Normal Grid to plan path
-branch = a_star(grid, start_ne, goal_ne,EculdianDistance,ActionCity,valid_actions_city)
-path, path_cost = retrivePathWithCost(start_ne, goal_ne, branch)
+path, path_cost = a_star(grid, start_ne, goal_ne,EculdianDistance,ActionCity,valid_actions_city)
 print("RED Grid Path length = {0}, path cost = {1}".format(len(path), path_cost))
 
 #Using voronoi to plan path
-branch2 = a_star_graph(G, start_ne_g, goal_ne_g, NormalDistance,ActionCity, valid_actions_city)
-path2, path_cost2 = retrivePathWithCost(start_ne_g, goal_ne_g, branch2)
+path2, path_cost2 = a_star_graph_complete(G, start_ne_g, goal_ne_g, EculdianDistance,ActionCity, valid_actions_city)
 print("Green Voronoi Path length = {0}, path cost = {1}".format(len(path2), path_cost2))
 
 #Draw Path on Grid and Skelton

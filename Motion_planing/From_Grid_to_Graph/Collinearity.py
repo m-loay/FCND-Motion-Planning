@@ -52,6 +52,18 @@ class Collinear:
             collinear = True
         return collinear
 
+    
+    @staticmethod
+    def collinearity_int(p1, p2, p3): 
+        collinear = False
+        # TODO: Calculate the determinant of the matrix using integer arithmetic 
+        det = p1[0]*(p2[1] - p3[1]) + p2[0]*(p3[1] - p1[1]) + p3[0]*(p1[1] - p2[1])
+        # TODO: Set collinear to True if the determinant is equal to zero
+        if det == 0:
+            collinear = True
+
+        return collinear
+
     # We're using collinearity here, but you could use Bresenham as well!
     @staticmethod
     def prune_path(path):
