@@ -7,20 +7,9 @@ import re
 from math import sqrt
 from udacidrone.frame_utils import global_to_local
 
-d = dirname(abspath(__file__))
-
-Planning_as_search = d + '\\Motion_planing\\Planning_as_search'
-sys.path.insert(1, Planning_as_search)
 from planning import a_star,a_star_graph_complete
 from simpleAction import ActionCity,valid_actions_city
 from heuristicFunctions import EculdianDistance,NormalDistance
-
-Flying_Car_Representation = d + '\\Motion_planing\\Flying_Car_Representation'
-sys.path.insert(1, Flying_Car_Representation)
-from ConfgurationSpace import create_grid
-
-From_Grid_to_Graph = d + '\\Motion_planing\\From_Grid_to_Graph'
-sys.path.insert(1, From_Grid_to_Graph)
 from Collinearity import Collinear
 from grid_to_graph import closest_point,create_graph_from_edges,create_grid_and_edges_voronoi
 

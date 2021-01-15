@@ -10,7 +10,8 @@ from udacidrone.connection import MavlinkConnection
 from udacidrone.messaging import MsgID
 from udacidrone.frame_utils import global_to_local
 from planning_utils import read_data, calculate_start_goal_local_position
-from planning_utils import create_grid,find_path_grid
+from ConfgurationSpace import create_grid
+from planning_utils import find_path_grid
 from planning_utils import create_grid_and_edges_voronoi,create_graph_from_edges,find_path_graph_voronoi
 
 
